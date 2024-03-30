@@ -45,6 +45,10 @@ jobs:
           github-token: '${{secrets.GITHUB_TOKEN}}'
           bgm-user-id: 'astrack'
           bgm-img-path: 'bgm/card.svg'
+          show-animes: true
+          show-games: true
+          show-mangas: true
+          show-characters: true
 
       - name: Get the output image url
         run: echo "图片生成的链接地址 ${{ steps.bgm.outputs.message }}"
