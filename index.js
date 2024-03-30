@@ -52,7 +52,7 @@ async function uploadImage(githubToken, string) {
     owner,
     repo,
     path: fileName,
-    message: 'Upload file via GitHub Actions',
+    message: 'Generate Bangumi Card',
     content: Buffer.from(string).toString('base64'),
     committer: {
       name: 'GitHub Actions',
