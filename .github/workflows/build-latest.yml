@@ -23,6 +23,8 @@ jobs:
   
       - name: Build with ncc
         run: npx @vercel/ncc build index.js -o dist
+
+      - run: cp -R tmpl dist/  
   
       - name: Push to release branch
         run: |
