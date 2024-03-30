@@ -14,9 +14,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Build
+        run: npm run package
       - name: Bgm Collection Card
         id: bgm
-        uses: Kom3ng/bangumi-action@main
+        uses: Kom3ng/bangumi-action@latest
         with:
           github-token: '${{secrets.GITHUB_TOKEN}}'
           bgm-user-id: 'astrack'

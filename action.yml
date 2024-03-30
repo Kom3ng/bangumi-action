@@ -37,4 +37,4 @@ outputs:
     description: '信息'
 runs:
   using: 'node20'
-  main: 'index.js'
+  main: 'dist/index.js'
