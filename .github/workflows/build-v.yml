@@ -33,4 +33,4 @@ jobs:
           git add -f dist/*
           git add action.yml
           git commit -m "${GITHUB_REF#refs/tags/}"
-          git push origin ${GITHUB_REF#refs/tags/}
+          git push -f origin ${GITHUB_REF#refs/tags/}

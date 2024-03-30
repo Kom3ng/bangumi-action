@@ -32,4 +32,4 @@ jobs:
           git add -f dist/*
           git add action.yml
           git commit -m "release"
-          git push origin latest
+          git push -f origin latest
