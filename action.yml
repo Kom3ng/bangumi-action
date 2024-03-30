@@ -36,9 +36,5 @@ outputs:
   message:
     description: '信息'
 runs:
-  using: 'node18'
-  steps:
-    - run: |
-      npm install
-      node index.js
-    shell: bash  
+  using: 'node20'
+  main: 'dist/index.js'

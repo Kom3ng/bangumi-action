@@ -2,6 +2,10 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const ejs = require('ejs');
 const bgm = require('./api/bgm');
+const fs = require('fs');
+const path = require('path');
+
+const template = fs.readFileSync(path.join(__dirname, 'tmpl/tmpl.ejs'), 'utf8');
 
 function getName(subject) {
   if (subject == null) return '';
@@ -148,7 +152,7 @@ async function generateBgmImage(userId, settings) {
     }
   });
 
-  return ejs.renderFile('tmpl/tmpl.ejs', {
+  return ejs.render(template, {
     getTags,
     getName,
     topTags,
