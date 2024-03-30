@@ -75,7 +75,12 @@ const downloadImage = async (url) => {
     console.log(`download image: ${url}`);
 
     return await client.get(url, headers)
-        .then(res => res.readBodyBuffer())
+        .then(res => {
+            if (res.message.statusCode !== 200) {
+                console.log(`Download image failed: ${res.message.statusMessage}`);
+            }
+            return res.readBodyBuffer();
+        })
         .then(buffer => buffer.toString('base64').trim());
 };
 

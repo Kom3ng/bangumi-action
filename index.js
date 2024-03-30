@@ -1,9 +1,9 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const ejs = require('ejs');
-const bgm = require('./api/bgm');
 const fs = require('fs');
 const path = require('path');
+const bgm = require('./api/bgm');
 
 const template = fs.readFileSync(path.join(__dirname, 'tmpl/tmpl.ejs'), 'utf8');
 
@@ -173,7 +173,7 @@ module.exports = {
   generateBgmImage,
 };
 
-async function main() {
+if (require.main === module) {
   try {
     let bgmUserId = core.getInput('bgm-user-id').trim();
     if (bgmUserId.length === 0) {
@@ -191,15 +191,11 @@ async function main() {
 
     console.log(`Generate for ${bgmUserId}!`);
 
-    await generateBgmImage(bgmUserId, settings).then(async (string) => {
+    generateBgmImage(bgmUserId, settings).then(async (string) => {
       console.log('生成卡片执行完成');
       await uploadImage(githubToken, string);
     });
   } catch (error) {
     core.setFailed(error.message);
   }
-}
-
-if (require.main === module) {
-  main();
 }
