@@ -29,7 +29,7 @@ jobs:
           git config --local user.email "3262392248@qq.com"
           git config --local user.name "Kom3ng"
           git checkout -b latest
-          git add dist/*
+          git add -f dist/*
           git add action.yml
           git commit -m "release"
           git push origin latest

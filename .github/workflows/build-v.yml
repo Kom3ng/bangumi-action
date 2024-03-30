@@ -30,7 +30,7 @@ jobs:
           git config --local user.email "3262392248@qq.com"
           git config --local user.name "Kom3ng"
           git checkout -b ${GITHUB_REF#refs/tags/}
-          git add dist/*
+          git add -f dist/*
           git add action.yml
           git commit -m "${GITHUB_REF#refs/tags/}"
           git push origin ${GITHUB_REF#refs/tags/}
