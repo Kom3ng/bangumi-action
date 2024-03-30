@@ -74,7 +74,7 @@ async function uploadImage(githubToken, string) {
 }
 
 async function generateBgmImage(userId, settings) {
-  const totalTags = new Set();
+  const totalTags = new Map();
   const animeList = [];
   const bookList = [];
   const gameList = [];
@@ -86,7 +86,13 @@ async function generateBgmImage(userId, settings) {
   data.forEach((item) => {
     // TAG
     const tags = item.tags || [];
-    tags.forEach((tag) => totalTags.add(tag));
+    tags.forEach((tag) => {
+      if (totalTags.has(tag)) {
+        totalTags.set(tag, totalTags.get(tag) + 1);
+      } else {
+        totalTags.set(tag, 1);
+      }
+    });
 
     if (item.subject_type === 1 && settings.showMangas) {
       bookList.push(item);
@@ -107,6 +113,10 @@ async function generateBgmImage(userId, settings) {
   const animes = animeList.length >= 3 ? animeList.slice(0, 3) : animeList;
   const topAnime = await generateSubjectItem(animes, '动画');
 
+  // 最喜欢的书籍
+  const books = bookList.length >= 3 ? bookList.slice(0, 3) : bookList;
+  const favoriteBooks = await generateSubjectItem(books, '书籍');
+
   // 最喜欢玩的游戏
   gameList.sort((a, b) => b.rate - a.rate);
   const topGame = gameList.length >= 1 ? gameList.slice(0, 1) : gameList;
@@ -119,7 +129,7 @@ async function generateBgmImage(userId, settings) {
   const recentlyGames = await generateSubjectItem(recentGame, '游戏');
 
   // 常用标签
-  let topTags = [...totalTags];
+  let topTags = Array.from(totalTags).sort((a, b) => b[1] - a[1]);
   topTags = topTags.length >= 3 ? topTags.slice(0, 3) : topTags;
 
   // 最喜欢的人物
@@ -151,6 +161,7 @@ async function generateBgmImage(userId, settings) {
     recentlyGames,
     animes: topAnime,
     settings,
+    favoriteBooks,
   });
 }
 
