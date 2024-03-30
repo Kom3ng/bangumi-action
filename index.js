@@ -18,19 +18,19 @@ function getTags(item) {
   return t.length === 0 ? '暂无' : t;
 }
 
-async function generateSubjectItem(items, tmpl, typeName) {
-  if (items == null) return '';
-  const renderedItems = await Promise.all(items.map(async (item) => {
-    const image = await bgm.downloadImage(item.subject.images.small);
-    return ejs.renderFile(tmpl, {
-      item,
-      typeName,
-      getName,
-      getTags,
-      image,
-    });
-  }));
-  return renderedItems.join('');
+async function generateSubjectItem(items, typeName) {
+  if (items == null) return [];
+
+  items.map(async (i) => {
+    const image = await bgm.downloadImage(i.subject.images.small);
+    // eslint-disable-next-line no-param-reassign
+    i.typeName = typeName;
+    // eslint-disable-next-line no-param-reassign
+    i.image = image;
+    return i;
+  });
+
+  return items;
 }
 
 async function uploadImage(githubToken, string) {
@@ -73,7 +73,7 @@ async function uploadImage(githubToken, string) {
   });
 }
 
-async function generateBgmImage(userId) {
+async function generateBgmImage(userId, settings) {
   const totalTags = new Set();
   const animeList = [];
   const bookList = [];
@@ -81,20 +81,20 @@ async function generateBgmImage(userId) {
 
   const data = await bgm.loadAllUserCollection(userId);
 
-  let characters = await bgm.loadCharacter(userId);
+  let characters = settings.showCharacters ? await bgm.loadCharacter(userId) : [];
 
   data.forEach((item) => {
     // TAG
     const tags = item.tags || [];
     tags.forEach((tag) => totalTags.add(tag));
 
-    if (item.subject_type === 1) {
+    if (item.subject_type === 1 && settings.showMangas) {
       bookList.push(item);
     }
-    if (item.subject_type === 2) {
+    if (item.subject_type === 2 && settings.showAnimes) {
       animeList.push(item);
     }
-    if (item.subject_type === 4) {
+    if (item.subject_type === 4 && settings.showGames) {
       gameList.push(item);
     }
   });
@@ -104,33 +104,31 @@ async function generateBgmImage(userId) {
   bookList.sort((a, b) => (b.rate === a.rate ? b.updated_at > a.updated_at : b.rate - a.rate));
 
   // 最喜欢的动画
-  const topAnime = animeList.length >= 3 ? animeList.slice(0, 3) : animeList;
-  const tmpAnime = await generateSubjectItem(topAnime, 'tmpl/subject.ejs', '动画');
+  const animes = animeList.length >= 3 ? animeList.slice(0, 3) : animeList;
+  const topAnime = await generateSubjectItem(animes, '动画');
 
   // 最喜欢玩的游戏
   gameList.sort((a, b) => b.rate - a.rate);
   const topGame = gameList.length >= 1 ? gameList.slice(0, 1) : gameList;
-  const mostLikeGame = await generateSubjectItem(topGame, 'tmpl/subject.ejs', '游戏');
+  const favoriteGames = await generateSubjectItem(topGame, '游戏');
 
   // 最近玩的的游戏
   const recently = gameList.filter((item) => item.type === 3);
   recently.sort((a, b) => (b.updated_at > a.updated_at ? 1 : 0));
   const recentGame = recently.length >= 1 ? recently.slice(0, 1) : recently;
-  const recentlyGame = await generateSubjectItem(recentGame, 'tmpl/subject.ejs', '游戏');
+  const recentlyGames = await generateSubjectItem(recentGame, '游戏');
 
   // 常用标签
   let topTags = [...totalTags];
   topTags = topTags.length >= 3 ? topTags.slice(0, 3) : topTags;
 
   // 最喜欢的人物
-  let characterHtml = '';
   characters = characters.length >= 22 ? characters.slice(0, 22) : characters;
-  characterHtml = await Promise.all(characters.map(async (character) => {
+  characters = await Promise.all(characters.map(async (character) => {
     const imgUrl = character.image;
     const imgData = await bgm.downloadImage(imgUrl);
-    return `<img src="data:image/png;base64,${imgData}" width="36" height="54" alt=""/>`;
+    return { image: imgData };
   }));
-  characterHtml = characterHtml.join('');
 
   // 玩过，在玩，点评的游戏
   let doneGame = 0;
@@ -141,15 +139,18 @@ async function generateBgmImage(userId) {
   });
 
   return ejs.renderFile('tmpl/tmpl.ejs', {
+    getTags,
+    getName,
     topTags,
     animeList,
     bookList,
-    tmpAnime,
-    characterHtml,
+    characters,
     userId,
     doneGame,
-    mostLikeGame,
-    recentlyGame,
+    favoriteGames,
+    recentlyGames,
+    animes: topAnime,
+    settings,
   });
 }
 
@@ -166,9 +167,16 @@ async function main() {
 
     const githubToken = core.getInput('github-token');
 
+    const settings = {};
+
+    settings.showAnimes = core.getBooleanInput('show-animes');
+    settings.showCharacters = core.getBooleanInput('show-characters');
+    settings.showGames = core.getBooleanInput('show-games');
+    settings.showMangas = core.getBooleanInput('show-mangas');
+
     console.log(`Generate for ${bgmUserId}!, token: ${githubToken}`);
 
-    await generateBgmImage(bgmUserId).then(async (string) => {
+    await generateBgmImage(bgmUserId, settings).then(async (string) => {
       console.log('生成卡片执行完成');
       await uploadImage(githubToken, string);
     });

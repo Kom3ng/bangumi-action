@@ -12,6 +12,26 @@ inputs:
     description: '图片卡片上传保存路径'
     required: true
     default: 'bgm/left.svg'
+  show-animes:
+    description: '是否显示动画'
+    required: false
+    default: 'true'
+  show-mangas:
+    description: '是否显示漫画'
+    required: false
+    default: 'true'
+  show-games:
+    description: '是否显示游戏'
+    required: false
+    default: 'true'
+  show-characters:
+    description: '是否显示角色'
+    required: false
+    default: 'true'
+  favorite-animes:
+    description: '展示的动画id(用逗号分隔, 不填则自动生成)'
+    required: false
+    default: ''        
 outputs:
   message:
     description: '信息'
