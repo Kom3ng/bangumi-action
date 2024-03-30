@@ -81,7 +81,9 @@ const downloadImage = async (url) => {
             }
             return res.readBodyBuffer();
         })
-        .then(buffer => buffer.toString('base64').trim());
+        .then(buffer => {
+            return buffer.toString('base64').trim();
+        });
 };
 
 module.exports = {

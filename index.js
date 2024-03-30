@@ -25,14 +25,14 @@ function getTags(item) {
 async function generateSubjectItem(items, typeName) {
   if (items == null) return [];
 
-  items.map(async (i) => {
+  await Promise.all(items.map(async (i) => {
     const image = await bgm.downloadImage(i.subject.images.small);
     // eslint-disable-next-line no-param-reassign
     i.typeName = typeName;
     // eslint-disable-next-line no-param-reassign
     i.image = image;
     return i;
-  });
+  }));
 
   return items;
 }

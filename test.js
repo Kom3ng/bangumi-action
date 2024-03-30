@@ -3,7 +3,7 @@ const main = require('./index');
 
 // eslint-disable-next-line no-undef
 test('card gen', async () => {
-  const bgmUserId = 'xiaoyvyv';
+  const bgmUserId = 'astrack';
 
   const settings = {
     showAnimes: true,
