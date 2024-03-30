@@ -40,3 +40,4 @@ runs:
   steps:
     - run: npm install
     - run: node index.js
+  shell: bash  
