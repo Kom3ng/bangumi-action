@@ -129,7 +129,7 @@ async function generateBgmImage(userId, settings) {
   const recentlyGames = await generateSubjectItem(recentGame, '游戏');
 
   // 常用标签
-  let topTags = Array.from(totalTags).sort((a, b) => b[1] - a[1]);
+  let topTags = Array.from(totalTags).sort((a, b) => b[1] - a[1]).map((tag) => tag[0]);
   topTags = topTags.length >= 3 ? topTags.slice(0, 3) : topTags;
 
   // 最喜欢的人物

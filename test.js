@@ -8,7 +8,7 @@ test('card gen', async () => {
   const settings = {
     showAnimes: true,
     showCharacters: true,
-    showGames: false,
+    showGames: true,
     showMangas: true,
   };
 
