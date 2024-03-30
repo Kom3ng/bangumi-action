@@ -1,3 +1,4 @@
+/* eslint-disable */
 const http = require('@actions/http-client');
 const cheerio = require('cheerio');
 const client = new http.HttpClient();
