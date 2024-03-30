@@ -36,7 +36,7 @@ outputs:
   message:
     description: '信息'
 runs:
-  using: 'node20'
+  using: 'node18'
   steps:
     - run: |
       npm install
