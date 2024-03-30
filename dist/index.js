@@ -81,7 +81,12 @@ const downloadImage = async (url) => {
     console.log(`download image: ${url}`);
 
     return await client.get(url, headers)
-        .then(res => res.readBodyBuffer())
+        .then(res => {
+            if (res.message.statusCode !== 200) {
+                console.log(`Download image failed: ${res.message.statusMessage}`);
+            }
+            return res.readBodyBuffer();
+        })
         .then(buffer => buffer.toString('base64').trim());
 };
 
@@ -99,9 +104,9 @@ module.exports = {
 const core = __nccwpck_require__(2614);
 const github = __nccwpck_require__(8686);
 const ejs = __nccwpck_require__(959);
-const bgm = __nccwpck_require__(7199);
 const fs = __nccwpck_require__(7147);
 const path = __nccwpck_require__(1017);
+const bgm = __nccwpck_require__(7199);
 
 const template = fs.readFileSync(__nccwpck_require__.ab + "tmpl.ejs", 'utf8');
 
@@ -271,7 +276,7 @@ module.exports = {
   generateBgmImage,
 };
 
-async function main() {
+if (require.main === require.cache[eval('__filename')]) {
   try {
     let bgmUserId = core.getInput('bgm-user-id').trim();
     if (bgmUserId.length === 0) {
@@ -289,17 +294,13 @@ async function main() {
 
     console.log(`Generate for ${bgmUserId}!`);
 
-    await generateBgmImage(bgmUserId, settings).then(async (string) => {
+    generateBgmImage(bgmUserId, settings).then(async (string) => {
       console.log('生成卡片执行完成');
       await uploadImage(githubToken, string);
     });
   } catch (error) {
     core.setFailed(error.message);
   }
-}
-
-if (require.main === require.cache[eval('__filename')]) {
-  main();
 }
 
 
