@@ -185,7 +185,7 @@ async function main() {
     settings.showGames = core.getBooleanInput('show-games');
     settings.showMangas = core.getBooleanInput('show-mangas');
 
-    console.log(`Generate for ${bgmUserId}!, token: ${githubToken}`);
+    console.log(`Generate for ${bgmUserId}!`);
 
     await generateBgmImage(bgmUserId, settings).then(async (string) => {
       console.log('生成卡片执行完成');

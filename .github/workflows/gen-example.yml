@@ -2,9 +2,9 @@ name: Bgm-Data-Sync
 on:
   # 每日零点执行（这个配置最小间隔5分钟）
   schedule: [{ cron: '0 0 * * *' }]
-  workflow_run:
-    workflows: [Build-Latest]
-    types: [completed]
+  push:
+    branches:
+      - main
 
 jobs:
   bgm-sync:
@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Bgm Collection Card
         id: bgm
-        uses: Kom3ng/bangumi-action@latest
+        uses: Kom3ng/bangumi-action@main
         with:
           github-token: '${{secrets.GITHUB_TOKEN}}'
           bgm-user-id: 'astrack'

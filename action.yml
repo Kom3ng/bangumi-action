@@ -37,4 +37,6 @@ outputs:
     description: '信息'
 runs:
   using: 'node20'
-  main: 'dist/index.js'
+  steps:
+    - run: npm install
+    - run: node index.js
